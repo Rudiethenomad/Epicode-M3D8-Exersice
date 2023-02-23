@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+
+
+
+<!-- img url -->
+
+<!-- Netflix Sans Font -->
+
+
+
+
+
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>Netflix Authentication </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="/common/css/idp.styles.css">
+        <style>
+        @font-face {
+            font-family: 'NetflixSans';
+            src: url('https://assets.meechum.prod.netflix.net/common/fonts/netflix-sans-regular.woff') format('woff'),
+            url('https://assets.meechum.prod.netflix.net/common/fonts/netflix-sans-regular.woff2') format('woff2');
+        }
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'NetflixSans', sans-serif;
+            font-size: 13px;
+            line-height: 19px;
+            overflow-x: hidden;
+            margin: 0;
+            background: linear-gradient(330.93deg, #DC1721 -7.96%, rgba(68, 18, 77, 0.5) 42.31%, rgba(5, 0, 0, 0) 81.62%), #000000;
+            background-repeat:  no-repeat;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
+        }
+        input:-webkit-autofill {
+            -webkit-text-fill-color: #efefef !important;
+        }
+
+        .btn {
+            position: relative;
+            width: 100%;
+            background-color: #E50914;
+            height: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .btn.is-disabled {
+            pointer-events: none;
+            background-color: #808080;
+        }
+
+        .btn.is-hidden {
+            /*  pointer-events: none; */
+            display: none;
+        }
+
+
+        .idp-migration-body {
+            background-color: #000000;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header {
+            margin-bottom: 35px;
+            text-align: center;
+
+        }
+
+        .header img {
+            display: block;
+            margin: 16px 0 0 16px;
+            margin: 60px 0;
+            display: inline-block;
+            width: 46px;
+            height: 70px;
+        }
+
+
+
+        #main {
+            margin-left: auto;
+            margin-right: auto;
+            /* position: relative; */
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .slide-container {
+            position: relative;
+            margin: 20px auto;
+            width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(35, 35, 35, 0.3);
+            /*background: #232323;*/
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .slider {
+            position: relative;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            transition: left 150ms ease-out;
+            width: 100%;
+        }
+
+        .view {
+            position: relative;
+            display: inline-block;
+            white-space: initial;
+            width: 100%;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            visibility: hidden;
+            height: 0;
+            vertical-align: top;
+        }
+
+        .view.is-active {
+            height: auto;
+            visibility: visible;
+        }
+
+        .view ul {
+            list-style: none;
+            padding: 8px 0;
+        }
+
+        .view p {
+            margin-bottom: 8px;
+        }
+
+        .view.submitting input {
+            pointer-events: none;
+        }
+
+        /* TODO: Move to meechum commons css? */
+        /* Netflix Ribbon Styles */
+        .symbol-wrapper {
+            position: fixed;
+            right: -15px;
+            top: 0;
+            min-width: 53vh;
+            width: 30%;
+            display: inline-block;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .symbol-mask {
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .left-mask {
+            transition: height .23s cubic-bezier(.55,.055,.675,.19);
+            bottom: 0;
+            top: auto;
+        }
+
+        .right-mask {
+            transition: height .75s cubic-bezier(.19,1,.22,1) .46s;
+            bottom: 0;
+            top: auto;
+        }
+
+        .middle-mask {
+            transition: height .23s linear .23s;
+        }
+
+        .symbol-left, .symbol-right, .symbol-middle {
+            position: absolute;
+            height: 100%;
+            background: #af1f1f;
+            overflow: hidden;
+            width: 28%;
+            z-index: 10;
+        }
+
+        .symbol-left {
+            left: 0;
+        }
+
+        .symbol-right {
+            right: 3%;
+        }
+
+        .symbol-middle {
+            left: 36%;
+            width: 28%;
+            background: #e50914;
+            transform: rotate(-19.5deg) scaleY(1.3);
+        }
+
+        input.form-control {
+            height: 40px;
+            color: #efefef;
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
+            border-radius: 4px;
+        }
+
+        input.dropdown {
+            background: url("https://assets.meechum.prod.netflix.net/common/images/caret-down.svg") right 10px center no-repeat;
+            cursor: pointer;
+        }
+
+        input.error {
+            border-color: #E50914;
+            background: url("https://assets.meechum.prod.netflix.net/common/images/alert-triangle-outline.svg") right 10px center no-repeat;
+            background-size: 16px;
+            background-color: rgba(229, 9, 20, 0.1) !important;
+        }
+
+        .error-msg {
+            display: none;
+            font-size: 12px;
+            line-height: 18px;
+            color: #EF686E;
+            margin-top: 4px;
+        }
+
+        .error-msg.is-active {
+            display: block;
+        }
+
+        .display-none {
+            display: none;
+        }
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.toggle {
+            margin-top: -6px;
+        }
+
+        .form-group.toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .form-group.toggle label {
+            position: relative;
+            top: -3px;
+            font-weight: 400;
+            margin: 0 0 0 10px;
+            color: #999;
+            user-select: none;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        a, a:hover {
+            color: #999cee;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        li {
+            margin: 4px 0;
+        }
+
+        li img {
+            margin-right: 2px;
+        }
+
+        .footer-text {
+            text-align: center;
+            max-width: 400px;
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 15px;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .idp-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 1010;
+            background-color: #232323;
+            width: calc(100% - 20px);
+            max-width: 516px;
+            padding: 20px 60px;
+            box-sizing: border-box;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5), 0px 0px 2px rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .idp-modal p {
+            color: #b8b8b8;
+            font-size: 13px;
+            line-height: 19px;
+        }
+
+        .modal-close {
+            display: block;
+            position: absolute;
+            top: 17px;
+            right: 15px;
+            width: 14px;
+            height: 14px;
+            background: url("https://assets.meechum.prod.netflix.net/common/images/close.svg") center no-repeat;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            width: 253px;
+            margin: 0 auto 30px auto;
+        }
+
+        .idp-modal .modal-help p {
+            color: #fff;
+        }
+
+
+        /* -- Account selection -- */
+        #account-list {
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .account {
+            position: relative;
+            display: block;
+            background: #161616;
+            border: 1px solid rgba(128, 128, 128, 0.4);
+            box-sizing: border-box;
+            border-radius: 4px;
+            padding: 12px 40px 12px 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .profile-image {
+            margin-top: -5px;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            background-color: #676767;
+            color: rgba(255, 255, 255, 0.9);
+            float: left;
+        }
+
+        .profile-image div {
+            text-transform: uppercase;
+            width: 48px;
+            line-height: 48px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .details {
+            margin-left: 64px;
+            overflow: hidden;
+        }
+
+        .details .name {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 21px;
+        }
+
+        .details .email {
+            font-size: 13px;
+            line-height: 19px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .details .title {
+            font-size: 12px;
+            line-height: 18px;
+        }
+
+        .delete {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            display: block;
+            width: 24px;
+            height: 24px;
+            background: url("https://assets.meechum.prod.netflix.net/common/images/delete.svg") center no-repeat;
+            background-size: 16px 20px;
+            text-indent: -999em;
+            overflow: hidden;
+        }
+
+
+        #btn-account {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+
+        #login {
+            padding: 60px;
+            text-align: center;
+        }
+
+        #login h3 {
+            margin-bottom: 20px;
+        }
+
+
+
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            position: absolute;
+            display: block;
+            top: 10px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            background: url("https://assets.meechum.prod.netflix.net/common/images/spinner.png") center no-repeat;
+            background-size: 100%;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+
+        .spinner2 {
+            height: 30px;
+            width: 30px;
+            color: #E50914;
+            position: relative;
+            display: inline-block;
+            border: 2px solid;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        button {
+            position: relative;
+            width: 100%;
+            background-color: #E50914;
+            height: 40px;
+            margin: 10px 0 !important;
+            color: rgba(255, 255, 255, 0.9);
+            transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+        }
+
+        button:hover {
+            text-decoration: none;
+            color: #fff !important;
+        }
+
+        @media screen and (max-width: 990px) {
+            /*body {*/
+            /*    background: url("https://assets.meechum.prod.netflix.net/common/images/bg-mobile.png") top center repeat-x;*/
+            /*}*/
+
+            .header img {
+                /*margin: 16px auto 0 auto;*/
+                margin-bottom: 35px;
+                text-align: center;
+            }
+
+            #main {
+                margin-left: auto;
+                margin-right: auto;
+                /* position: relative; */
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .slide-container, .footer-text {
+                width: calc(100% - 20px);
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+    <script src="/common/js/identifier.first.common.js"></script>
+    <script src="/common/js/identifier.first.email.js"></script>
+    <script src="/common/js/identifier.first.account.js"></script>
+    <script src="/common/js/identifier.first.password.js"></script>
+    <!--    <script src="/common/js/identifier.first.error.js"></script>-->
+        <script src="https://stethoscope-assets.prod.security.netflix.net/browser-client-id/browserClientId.js"></script>
+    </head>
+
+<body class="idp-migration-body">
+<div class="row">
+    <div class="header">
+        <!--            <a href="/"><img src="/common/images/NF-logo-authentication.svg"></a>-->
+        <img src="https://assets.meechum.prod.netflix.net/common/images/nflx-logo-classic.svg">
+    </div>
+</div>
+
+<div id="main" class="row">
+    <div class="slide-container">
+        <div class="slider" id="slider">
+
+            <div id="account-chooser" class="view">
+                <form id="form-account" method="post" autocomplete="off" accept-charset="UTF-8" action="/as/PgRTy/resume/as/authorization.ping">
+
+                    <h3>Choose Account</h3>
+
+                    <div id="account-list"></div>
+
+
+                    <p class="footer-text">
+                        <a href="#" id="link-select">Select a different account</a>
+                    </p>
+                    <input id="form-domain" type="hidden" name="domain" value="" />
+                    <input id="form-userIdentifier" type="hidden" name="userIdentifier" value="" />
+                    <input id="form-googleLogin" type="hidden" name="googleLogin" value="" />
+                    <button type="submit" id="btn-account-submit" class="btn is-hidden">Continue</button>
+                </form>
+            </div>
+            <div class="view" id="email">
+                <form id="form-email" method="post" autocomplete="off" accept-charset="UTF-8" action="/as/PgRTy/resume/as/authorization.ping">
+
+                    <h3 >Log in</h3>
+                    <p >Enter the email address you'd like to log in with.</p>
+
+                    <div class="form-group">
+                        <label id="email-address"  for="user-identifier">Email Address</label>
+                        <input id="user-identifier" name="userIdentifier" type="email" class="form-control" placeholder="Enter email address" value="" required>
+                        <div class="error-msg email"></div>
+                    </div>
+                                        <div class="form-group">
+                        <button type="submit" id="btn-continue" class="btn is-disabled">Continue</button>
+                    </div>
+                </form>
+            </div>
+            <div class="view" id="password">
+                <form id="form-password" method="post" autocomplete="off" accept-charset="UTF-8" action="/as/PgRTy/resume/as/authorization.ping">
+                                        <input type="hidden" id="browserClientId" name="browserClientId" value="NOT_SET" />
+                    
+                    <h3>Log in</h3>
+                    <div class="form-group">
+                        <label for="field-username2">Email Address</label>
+                        <input id="field-username2"  name="userIdentifier" class="form-control dropdown" value="">
+                        <div id="btn-account"></div>
+                        <input id="domain" type="hidden" name="domain" value="" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="field-password">Password</label>
+                        <input id="field-password" class="form-control" name="password" type="password" spellcheck="false" placeholder="Enter password" required>
+                        <div class="error-msg password"></div>
+                    </div>
+
+                    <div class="form-group toggle">
+                        <input id="field-password-toggle" type="checkbox">
+                        <label for="field-password-toggle">Show Password</label>
+                    </div>
+                                        <div class="form-group">
+                        <button type="submit" id="btn-login" class="btn">Log in</button>
+                    </div>
+
+                </form>
+                <p class="footer-text">
+                    <a href="#" id="link-reset" target="_blank">Reset password</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="symbol-wrapper animated-in hidden-xs hidden-sm">-->
+<!--    <div class="symbol-mask left-mask">-->
+<!--        <div class="symbol-left">-->
+<!--            <div class="shadow-wrapper middle-mask symbol-mask">-->
+<!--                <div class="symbol-shadow"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="symbol-mask right-mask">-->
+<!--        <div class="symbol-right">-->
+<!--            <div class="symbol-shadow"></div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="symbol-middle-wrapper middle-mask symbol-mask">-->
+<!--        <div class="symbol-middle"></div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+
+<div id="modal-reset" class="idp-modal hidden">
+    <div class="modal-close"></div>
+    <div class="modal-title">
+        <!--        <img src="https://assets.meechum.prod.netflix.net/common/images/NF-logo-authentication.svg" />-->
+    </div>
+    <h4>Need to reset your password?</h4><p>At this time, Netflix employees are unable to manually reset account passwords.</p><p>Please message the Slack help channel <a href="https://netflix.slack.com/archives/C0S928EBE" target="_blank">#ntech-help</a> or email <a href="mailto:askntech@netflix.com">askntech@netflix.com</a> for help with resetting your password.</p>
+</div>
+<div id="modal-suspended-workforce" class="idp-modal hidden">
+    <div class="modal-close"></div>
+    <div class="modal-title">
+        <!--        <img src="https://assets.meechum.prod.netflix.net/common/images/NF-logo-authentication.svg" />-->
+    </div>
+    <p>Your account has been suspended due to inactivity.</p><p>Please message the Slack help channel <a href="https://netflix.slack.com/archives/C0S928EBE" target="_blank">#ntech-help</a> or email <a href="mailto:askntech@netflix.com">askntech@netflix.com</a> for help with resetting your password.<p>
+
+    <!--                        <h4>Hmm. There's been an error.</h4>-->
+    <!--                        <p>&lt;Display error message from backend&gt;</p>-->
+    <!--                        <p>To get help accessing your account, please message the Slack help channel <a href="https://netflix.slack.com/archives/C0ZQD445A" target="_blank">#ntech-help</a> or email <a href="mailto:askntech@netflix.com">askntech@netflix.com</a> using the Reference ID.</p>-->
+    <!--                        <div class="modal-help">-->
+    <!--                            <p>Error Reference ID: XXXXXXXXX</p>-->
+    <!--                        </div>-->
+</div>
+<div id="modal-suspended-partner" class="idp-modal hidden">
+    <div class="modal-close"></div>
+    <div class="modal-title">
+        <!--        <img src="https://assets.meechum.prod.netflix.net/common/images/NF-logo-authentication.svg" />-->
+    </div>
+    <p>Your account has been suspended due to inactivity.</p><p>To begin the recovery process, we have sent you a password recovery link to the email address on file. If you are still having trouble, please contact your administrator.</p>
+
+</div>
+<div id="overlay" class="hidden"></div>
+
+<script src="/common/js/browserClientIdSync.js"></script>
+<script type="text/javascript">
+
+    var viewOpts = {};
+    viewOpts.resumePath = '/as/PgRTy/resume/as/authorization.ping';
+    viewOpts.transactionId = 'wElHTNUwtupC4GAl+NXIBahyFWLMchcDdIMEzO738/K3pdVyLkVrOlsodzB7CDPMTk1/CrvNMp63tVeE0k+BAPERPR8=';
+    viewOpts.baseUrl = 'https://meechum.netflix.com';
+    viewOpts.showCaptcha = 'false';
+
+    if('email' === 'email'){
+        viewOpts.name = 'email';
+        if(''){
+            viewOpts.errorMessage = 'identifier.first.email.template.generic.';
+        }
+        if(''){
+            viewOpts.userIdentifier = '';
+        }
+    }
+    if('email' === 'password' || 'email' === 'password_suspended'){
+        if(''){
+            viewOpts.errorMessage = 'identifier.first.password.template.generic.';
+        }
+        viewOpts.rememberUserCookieName = '$rememberUserCookieName';
+
+        viewOpts.captchaErrorMsg = 'Complete Captcha';
+        viewOpts.users = $users;
+        viewOpts.changePasswordUrl = '$changePasswordUrl';
+        viewOpts.name = 'password';
+        viewOpts.isWorkforcePasswordResetEnabled = $isWorkforcePasswordResetEnabled;
+        viewOpts.workforcePasswordUrls = $workforcePasswordUrls;
+        if('email' === 'password_suspended'){
+            viewOpts.suspended = true;
+        }
+    }
+    if('email' === 'account'){
+        viewOpts.name = 'account';
+        viewOpts.users = $users;
+        viewOpts.rememberUserCookieName = '$rememberUserCookieName';
+        viewOpts.rememberUserCookieExpiration = '$rememberUserCookieExpiration';
+        viewOpts.changePasswordUrl = '$changePasswordUrl';
+        viewOpts.isWorkforcePasswordResetEnabled = $isWorkforcePasswordResetEnabled;
+        viewOpts.workforcePasswordUrls = $workforcePasswordUrls;
+        viewOpts.googleLoginStrategy = '$googleLoginStrategy';
+        if(''){
+            viewOpts.errorMessage = 'identifier.first.password.template.generic.';
+        }
+    }
+    idp.common.init({
+        // all options are optional
+        view: viewOpts.name,    // email, password, account
+        viewOptions: viewOpts,
+        // passwordModal: false,
+        // displayError: true
+    });
+
+    function  enableContinueButton() {
+        idp.email.enableContinueButton();
+    }
+    function  captchaCompleted() {
+        idp.password.captchaCompleted();
+    }
+</script>
+
+</body>
+</html>
