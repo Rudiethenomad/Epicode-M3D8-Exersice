@@ -1,23 +1,36 @@
 body{
     width: 100vw;
     margin-left: 50px;
+    background-color: black;
 
 }
 .nav{
     margin-right: 50px;
+    margin-bottom: 10px;
+   
 }
 .jon_style{
     margin:50px;
     margin-bottom: 0;
+    color: beige;
+    background-color: black;
 }
 .genres{
     width: 100vw;
+    color: azure;
 }
 .dropdown{
     display: flex;
     margin-bottom: 10px;
+    color:white;
 }
 p{
-   
+   color:white;
     padding-right: 50px;
+}
+
+.movies{
+ gap: 0;  
+ background-color: black; 
+ 
 }
